@@ -1,106 +1,98 @@
 <template>
   <v-app id="inspire">
-    <v-system-bar>
-      <v-spacer></v-spacer>
 
-      <v-icon>mdi-square</v-icon>
+    <v-app-bar>
 
-      <v-icon>mdi-circle</v-icon>
+      <v-toolbar-title class="mx-12">Consultorio Juridico </v-toolbar-title>
 
-      <v-icon>mdi-triangle</v-icon>
-    </v-system-bar>
-
-        <v-navigation-drawer v-model="drawer">
-          <v-sheet
-            color="grey-lighten-4"
-            class="pa-4"
-          >
-            <v-avatar
-              class="mb-4"
-              color="grey-darken-1"
-              size="64"
-            ></v-avatar>
-
-            <div>monitor</div>
-          </v-sheet>
-
-          <v-divider></v-divider>
-
-          <v-list>
-            <v-list-item
-              v-for="[icon, text] in links"
-              :key="icon"
-              link
-            >
-              <template v-slot:prepend>
-                <v-icon>{{ icon }}</v-icon>
-              </template>
-
-              <v-list-item-title>{{ text }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-          
-        </v-navigation-drawer>
+      <v-btn prepend-icon="mdi-login" variant="outlined"> <NuxtLink to="/login"> Iniciar Sesion  </NuxtLink></v-btn>
+    </v-app-bar>
 
     <v-main>
-      <v-container
-        class="py-8 px-6"
-        fluid
-      >
-        <v-row>
-          <v-col
-            v-for="card in cards"
-            :key="card"
-            cols="12"
-          >
-            <v-card>
 
-              <v-list lines="two">
-                <v-list-subheader>{{ card }}</v-list-subheader>
-                <template v-for="n in 6" :key="n">
-                  <v-list-item>
-                    <template v-slot:prepend>
-                      <v-avatar color="grey-darken-1"></v-avatar>
-                    </template>
 
-                    <v-list-item-title>Message {{ n }}</v-list-item-title>
+      <div class="d-flex flex-column ma-16">
+  
+        <v-sheet width="300" class="mx-auto">
 
-                    <v-list-item-subtitle>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil repellendus distinctio similique
-                    </v-list-item-subtitle>
-                  </v-list-item>
+      <v-form fast-fail @submit.prevent>
+        <v-text-field
+          v-model="firstName"
+          prepend-inner-icon="mdi-account"
+          label="Usuario"
+          :rules="[rules.required]"
+        ></v-text-field>
+  
+        <v-text-field
+              v-model="password"
+              prepend-inner-icon="mdi-lock"
+              :rules="[rules.required, rules.min]"
+              :type="show1 ? 'text' : 'password'"
+              name="input-10-1"
+              label="Contraseña"
+        
+            ></v-text-field>
 
-                  <v-divider
-                    v-if="n !== 6"
-                    :key="`divider-${n}`"
-                    inset
-                  ></v-divider>
-                </template>
-              </v-list>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
+        <v-select
+          v-model="select"
+          :items="items"
+          label="Rol"
+          :rules="[rules.required]"
+        ></v-select>
+  
+        <v-btn type="submit" block class="mt-2"><NuxtLink to="/dashboard">Submit</NuxtLink></v-btn>
+      </v-form>
+    </v-sheet>
+
+      </div>
+
+
     </v-main>
   </v-app>
 </template>
 
 <script>
-  export default {
-    data: () => ({
-      cards: ['Today'],
-      drawer: null,
-      links: [
-        ['mdi-inbox-arrow-down', 'Inbox'],
-        ['mdi-send', 'Send'],
-        ['mdi-delete', 'Trash'],
-        ['mdi-alert-octagon', 'Spam'],
-      ],
-    }),
+export default {
+   data(){
+    return {
+
+      show1: false,
+      show2: true,
+      password: 'Password',
+      rules: {
+        required: value => !!value || 'Required.',
+        min: v => v.length >= 8 || 'Min 8 characters',
+        emailMatch: () => (`The email and password you entered don't match`),
+      },
+    
+    valid: true,
+    name: '',
+    nameRules: [
+      v => !!v || 'Name is required',
+      v => (v && v.length <= 10) || 'Name must be less than 10 characters',
+    ],
+    select: null,
+    items: [
+      'Estudiante',
+      'Monitor',
+      'Asesor',
+      'Director',
+    ],
+    checkbox: false,
   }
+},
+  methods: {
+    async validate () {
+      const { valid } = await this.$refs.form.validate()
+
+      if (valid) alert('Form is valid')
+    },
+    reset () {
+      this.$refs.form.reset()
+    },
+    resetValidation () {
+      this.$refs.form.resetValidation()
+    },
+  },
+}
 </script>
-
-
-<style lang="scss">
-@use './settings';
-</style>
